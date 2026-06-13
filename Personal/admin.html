@@ -124,7 +124,7 @@
   </div>
 
   <!-- Stats bar -->
-  <div id="stats-bar" style="display:none;background:rgba(255,248,245,0.05);border:1px solid rgba(212,175,55,0.15);border-radius:12px;padding:1rem 1.5rem;margin-bottom:2.5rem;display:flex;gap:2rem;justify-content:space-around;">
+  <div id="stats-bar" style="background:rgba(255,248,245,0.05);border:1px solid rgba(212,175,55,0.15);border-radius:12px;padding:1rem 1.5rem;margin-bottom:2.5rem;display:flex;gap:2rem;justify-content:space-around;">
     <div style="text-align:center;">
       <p id="stat-count" class="font-display gold-text" style="font-size:2rem;font-weight:300;">—</p>
       <p style="font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--dusty);">Reviews</p>
@@ -195,9 +195,12 @@
       </div>
     </div>
 
-    <!-- Loading state -->
-    <div id="visits-loading" style="text-align:center;padding:2rem;display:none;">
-      <p class="font-display" style="font-size:1.15rem;font-style:italic;color:rgba(255,248,245,0.5);">Loading visit data…</p>
+    <!-- No visits state -->
+    <div id="visits-empty" style="display:none;text-align:center;padding:2rem;background:rgba(255,248,245,0.05);border:1px solid rgba(212,175,55,0.15);border-radius:12px;">
+      <p style="font-size:2rem;margin-bottom:0.5rem;">🌸</p>
+      <p class="font-display" style="font-size:1.1rem;font-style:italic;color:rgba(255,248,245,0.6);">
+        No visits recorded yet…
+      </p>
     </div>
 
     <!-- Recent visits table -->
@@ -228,7 +231,7 @@
     </div>
 
     <!-- No smiles state -->
-    <div id="emotion-smiles-empty" style="display:none;text-align:center;padding:2rem;">
+    <div id="emotion-smiles-empty" style="display:none;text-align:center;padding:2rem;background:rgba(255,248,245,0.05);border:1px solid rgba(212,175,55,0.15);border-radius:12px;">
       <p style="font-size:2rem;margin-bottom:0.5rem;">🌸</p>
       <p class="font-display" style="font-size:1.1rem;font-style:italic;color:rgba(255,248,245,0.6);">
         No smiles recorded yet…
@@ -267,7 +270,7 @@ async function loadFeedback() {
 
     document.getElementById('loading').style.display = 'none';
 
-    if (!data.length) {
+    if (!data || !data.length) {
       document.getElementById('empty').style.display = 'block';
       return;
     }
@@ -304,7 +307,8 @@ async function loadFeedback() {
       list.appendChild(card);
     });
 
-  } catch {
+  } catch (err) {
+    console.error('Error loading feedback:', err);
     document.getElementById('loading').style.display = 'none';
     document.getElementById('error').style.display = 'block';
   }
@@ -321,16 +325,27 @@ function escapeHtml(str) {
 
 async function loadVisits() {
   try {
+    console.log('Starting loadVisits...');
     const res = await fetch('/api/track');
     console.log('Visits API response status:', res.status);
-    if (!res.ok) throw new Error('Failed to fetch visits');
+    
+    if (!res.ok) {
+      throw new Error(`Failed to fetch visits: ${res.status}`);
+    }
+    
     const visits = await res.json();
     console.log('Visits data received:', visits);
+    console.log('Visits is array:', Array.isArray(visits));
+    console.log('Visits length:', visits ? visits.length : 'null');
+
+    // Hide loading state
+    document.getElementById('visits-loading').style.display = 'none';
 
     if (!visits || visits.length === 0) {
-      console.log('No visits data available');
+      console.log('No visits data available - showing empty state');
       document.getElementById('visits-stats').style.display = 'none';
       document.getElementById('recent-visits-container').style.display = 'none';
+      document.getElementById('visits-empty').style.display = 'block';
       return;
     }
 
@@ -348,7 +363,7 @@ async function loadVisits() {
     // Update stats
     document.getElementById('total-visits').textContent = visits.length;
     document.getElementById('unique-devices').textContent = uniqueDevices;
-    document.getElementById('most-device').textContent = mostUsedDevice[0];
+    document.getElementById('most-device').textContent = mostUsedDevice ? mostUsedDevice[0] : '—';
 
     // Device breakdown
     const breakdownDiv = document.getElementById('device-breakdown');
@@ -372,7 +387,10 @@ async function loadVisits() {
     // Recent visits
     const recentList = document.getElementById('recent-visits-list');
     recentList.innerHTML = '';
-    visits.slice(0, 20).forEach((v, i) => {
+    const recentVisits = visits.slice(0, 20);
+    console.log('Rendering', recentVisits.length, 'recent visits');
+    
+    recentVisits.forEach((v, i) => {
       const card = document.createElement('div');
       card.className = 'card fade-in';
       card.style.animationDelay = `${i * 50}ms`;
@@ -396,19 +414,17 @@ async function loadVisits() {
       recentList.appendChild(card);
     });
 
+    // Show everything
     document.getElementById('visits-stats').style.display = 'block';
     document.getElementById('recent-visits-container').style.display = 'block';
-    document.getElementById('visits-loading').style.display = 'none';
+    document.getElementById('visits-empty').style.display = 'none';
 
   } catch (err) {
     console.error('Error loading visits:', err);
     document.getElementById('visits-loading').style.display = 'none';
     document.getElementById('visits-stats').style.display = 'none';
     document.getElementById('recent-visits-container').style.display = 'none';
-    const errorDiv = document.createElement('div');
-    errorDiv.style.cssText = 'text-align:center;padding:2rem;color:var(--rose);';
-    errorDiv.innerHTML = '<p class="font-display" style="font-style:italic;">Could not load visit data. Please check console for details.</p>';
-    document.querySelector('[id="visits-stats"]').parentElement.appendChild(errorDiv);
+    document.getElementById('visits-empty').style.display = 'block';
   }
 }
 
@@ -441,13 +457,24 @@ function validatePin() {
 
 async function loadEmoSmiles() {
   try {
+    console.log('Starting loadEmoSmiles...');
     const res = await fetch('/api/emotion-smile');
-    if (!res.ok) throw new Error('Failed to fetch emotion smiles');
+    console.log('Emotion smiles API response status:', res.status);
+    
+    if (!res.ok) {
+      throw new Error(`Failed to fetch emotion smiles: ${res.status}`);
+    }
+    
     const smiles = await res.json();
+    console.log('Smiles data received:', smiles);
+    console.log('Smiles is array:', Array.isArray(smiles));
+    console.log('Smiles length:', smiles ? smiles.length : 'null');
 
     if (!smiles || smiles.length === 0) {
+      console.log('No smiles data available - showing empty state');
       document.getElementById('emotion-smiles-empty').style.display = 'block';
       document.getElementById('emotion-smiles-stats').style.display = 'none';
+      document.getElementById('emotion-smiles-container').style.display = 'none';
       return;
     }
 
@@ -459,7 +486,10 @@ async function loadEmoSmiles() {
     // Recent smiles
     const smilesList = document.getElementById('emotion-smiles-list');
     smilesList.innerHTML = '';
-    smiles.slice(0, 50).forEach((s, i) => {
+    const recentSmiles = smiles.slice(0, 50);
+    console.log('Rendering', recentSmiles.length, 'recent smiles');
+    
+    recentSmiles.forEach((s, i) => {
       const card = document.createElement('div');
       card.className = 'card fade-in';
       card.style.animationDelay = `${i * 50}ms`;
@@ -483,6 +513,8 @@ async function loadEmoSmiles() {
   } catch (err) {
     console.error('Error loading emotion smiles:', err);
     document.getElementById('emotion-smiles-empty').style.display = 'block';
+    document.getElementById('emotion-smiles-stats').style.display = 'none';
+    document.getElementById('emotion-smiles-container').style.display = 'none';
   }
 }
 
