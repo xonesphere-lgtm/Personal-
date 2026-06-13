@@ -46,8 +46,6 @@
       background: rgba(255, 248, 245, 0.1);
       border-color: rgba(212, 175, 55, 0.4);
     }
-    .star-filled { color: #D4AF37; }
-    .star-empty  { color: rgba(212, 175, 55, 0.25); }
     .divider {
       width: 80px; height: 1px;
       background: linear-gradient(90deg, transparent, var(--champagne), transparent);
@@ -171,42 +169,37 @@
       <div class="divider" style="margin:1rem auto 0;"></div>
     </div>
 
-    <!-- Visit stats -->
-    <div id="visits-stats" style="background:rgba(255,248,245,0.05);border:1px solid rgba(212,175,55,0.15);border-radius:12px;padding:2rem;margin-bottom:3rem;">
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:2rem;text-align:center;margin-bottom:2rem;">
-        <div>
-          <p id="total-visits" class="font-display gold-text" style="font-size:2.5rem;font-weight:300;margin-bottom:0.5rem;">—</p>
-          <p style="font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--dusty);">Total Visits</p>
+    <!-- Visit stats container -->
+    <div id="visits-content">
+      <!-- Visit stats -->
+      <div id="visits-stats" style="background:rgba(255,248,245,0.05);border:1px solid rgba(212,175,55,0.15);border-radius:12px;padding:2rem;margin-bottom:3rem;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:2rem;text-align:center;margin-bottom:2rem;">
+          <div>
+            <p id="total-visits" class="font-display gold-text" style="font-size:2.5rem;font-weight:300;margin-bottom:0.5rem;">—</p>
+            <p style="font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--dusty);">Total Visits</p>
+          </div>
+          <div>
+            <p id="unique-devices" class="font-display gold-text" style="font-size:2.5rem;font-weight:300;margin-bottom:0.5rem;">—</p>
+            <p style="font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--dusty);">Device Types</p>
+          </div>
+          <div>
+            <p id="most-device" class="font-display" style="font-size:1.5rem;font-weight:300;margin-bottom:0.5rem;color:var(--rose);">—</p>
+            <p style="font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--dusty);">Most Used</p>
+          </div>
         </div>
-        <div>
-          <p id="unique-devices" class="font-display gold-text" style="font-size:2.5rem;font-weight:300;margin-bottom:0.5rem;">—</p>
-          <p style="font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--dusty);">Device Types</p>
-        </div>
-        <div>
-          <p id="most-device" class="font-display" style="font-size:1.5rem;font-weight:300;margin-bottom:0.5rem;color:var(--rose);">—</p>
-          <p style="font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--dusty);">Most Used</p>
+
+        <!-- Device breakdown -->
+        <div style="border-top:1px solid rgba(212,175,55,0.15);padding-top:2rem;">
+          <p class="font-display" style="font-size:1.1rem;font-weight:300;color:var(--cream);margin-bottom:1.5rem;text-align:center;">Breakdown by Device</p>
+          <div id="device-breakdown" style="display:flex;flex-direction:column;gap:0.75rem;"></div>
         </div>
       </div>
 
-      <!-- Device breakdown -->
-      <div style="border-top:1px solid rgba(212,175,55,0.15);padding-top:2rem;">
-        <p class="font-display" style="font-size:1.1rem;font-weight:300;color:var(--cream);margin-bottom:1.5rem;text-align:center;">Breakdown by Device</p>
-        <div id="device-breakdown" style="display:flex;flex-direction:column;gap:0.75rem;"></div>
+      <!-- Recent visits table -->
+      <div id="recent-visits-container" style="display:block;">
+        <p class="font-display" style="font-size:1.15rem;font-weight:300;color:var(--cream);margin-bottom:1.5rem;text-align:center;">Recent Visits</p>
+        <div id="recent-visits-list" style="display:flex;flex-direction:column;gap:0.75rem;"></div>
       </div>
-    </div>
-
-    <!-- No visits state -->
-    <div id="visits-empty" style="display:none;text-align:center;padding:2rem;background:rgba(255,248,245,0.05);border:1px solid rgba(212,175,55,0.15);border-radius:12px;">
-      <p style="font-size:2rem;margin-bottom:0.5rem;">🌸</p>
-      <p class="font-display" style="font-size:1.1rem;font-style:italic;color:rgba(255,248,245,0.6);">
-        No visits recorded yet…
-      </p>
-    </div>
-
-    <!-- Recent visits table -->
-    <div id="recent-visits-container" style="display:none;">
-      <p class="font-display" style="font-size:1.15rem;font-weight:300;color:var(--cream);margin-bottom:1.5rem;text-align:center;">Recent Visits</p>
-      <div id="recent-visits-list" style="display:flex;flex-direction:column;gap:0.75rem;"></div>
     </div>
   </div>
 
@@ -221,27 +214,22 @@
       <div class="divider" style="margin:1rem auto 0;"></div>
     </div>
 
-    <!-- Smiles stats -->
-    <div id="emotion-smiles-stats" style="background:rgba(255,248,245,0.05);border:1px solid rgba(212,175,55,0.15);border-radius:12px;padding:2rem;margin-bottom:3rem;text-align:center;">
-      <p id="total-smiles" class="font-display gold-text" style="font-size:2.5rem;font-weight:300;margin-bottom:0.5rem;">—</p>
-      <p style="font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--dusty);">Times She Smiled Without Words</p>
-      <p class="font-display" style="font-size:0.95rem;font-style:italic;color:var(--light-mid);margin-top:1rem;">
-        Her smile says what words cannot. ❤️
-      </p>
-    </div>
+    <!-- Smiles content container -->
+    <div id="smiles-content">
+      <!-- Smiles stats -->
+      <div id="emotion-smiles-stats" style="background:rgba(255,248,245,0.05);border:1px solid rgba(212,175,55,0.15);border-radius:12px;padding:2rem;margin-bottom:3rem;text-align:center;">
+        <p id="total-smiles" class="font-display gold-text" style="font-size:2.5rem;font-weight:300;margin-bottom:0.5rem;">—</p>
+        <p style="font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--dusty);">Times She Smiled Without Words</p>
+        <p class="font-display" style="font-size:0.95rem;font-style:italic;color:var(--light-mid);margin-top:1rem;">
+          Her smile says what words cannot. ❤️
+        </p>
+      </div>
 
-    <!-- No smiles state -->
-    <div id="emotion-smiles-empty" style="display:none;text-align:center;padding:2rem;background:rgba(255,248,245,0.05);border:1px solid rgba(212,175,55,0.15);border-radius:12px;">
-      <p style="font-size:2rem;margin-bottom:0.5rem;">🌸</p>
-      <p class="font-display" style="font-size:1.1rem;font-style:italic;color:rgba(255,248,245,0.6);">
-        No smiles recorded yet…
-      </p>
-    </div>
-
-    <!-- Recent smiles timeline -->
-    <div id="emotion-smiles-container" style="display:none;">
-      <p class="font-display" style="font-size:1.15rem;font-weight:300;color:var(--cream);margin-bottom:1.5rem;text-align:center;">Every Moment She Smiled</p>
-      <div id="emotion-smiles-list" style="display:flex;flex-direction:column;gap:0.75rem;"></div>
+      <!-- Recent smiles timeline -->
+      <div id="emotion-smiles-container" style="display:block;">
+        <p class="font-display" style="font-size:1.15rem;font-weight:300;color:var(--cream);margin-bottom:1.5rem;text-align:center;">Every Moment She Smiled</p>
+        <div id="emotion-smiles-list" style="display:flex;flex-direction:column;gap:0.75rem;"></div>
+      </div>
     </div>
   </div>
 
@@ -254,12 +242,6 @@ function renderStars(count) {
     out += `<span style="color:${i <= count ? '#D4AF37' : 'rgba(212,175,55,0.2)'}; font-size:1.3rem;">★</span>`;
   }
   return out;
-}
-
-function formatDate(iso) {
-  if (!iso) return '';
-  const d = new Date(iso);
-  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
 async function loadFeedback() {
@@ -325,27 +307,12 @@ function escapeHtml(str) {
 
 async function loadVisits() {
   try {
-    console.log('Starting loadVisits...');
     const res = await fetch('/api/track');
-    console.log('Visits API response status:', res.status);
-    
-    if (!res.ok) {
-      throw new Error(`Failed to fetch visits: ${res.status}`);
-    }
-    
+    if (!res.ok) throw new Error('Failed to fetch visits');
     const visits = await res.json();
-    console.log('Visits data received:', visits);
-    console.log('Visits is array:', Array.isArray(visits));
-    console.log('Visits length:', visits ? visits.length : 'null');
-
-    // Hide loading state
-    document.getElementById('visits-loading').style.display = 'none';
 
     if (!visits || visits.length === 0) {
-      console.log('No visits data available - showing empty state');
       document.getElementById('visits-stats').style.display = 'none';
-      document.getElementById('recent-visits-container').style.display = 'none';
-      document.getElementById('visits-empty').style.display = 'block';
       return;
     }
 
@@ -353,7 +320,6 @@ async function loadVisits() {
     const deviceCounts = {};
     visits.forEach(v => {
       const device = v.deviceType || v.device_type;
-      console.log('Visit device:', device);
       deviceCounts[device] = (deviceCounts[device] || 0) + 1;
     });
 
@@ -363,7 +329,7 @@ async function loadVisits() {
     // Update stats
     document.getElementById('total-visits').textContent = visits.length;
     document.getElementById('unique-devices').textContent = uniqueDevices;
-    document.getElementById('most-device').textContent = mostUsedDevice ? mostUsedDevice[0] : '—';
+    document.getElementById('most-device').textContent = mostUsedDevice[0];
 
     // Device breakdown
     const breakdownDiv = document.getElementById('device-breakdown');
@@ -387,10 +353,7 @@ async function loadVisits() {
     // Recent visits
     const recentList = document.getElementById('recent-visits-list');
     recentList.innerHTML = '';
-    const recentVisits = visits.slice(0, 20);
-    console.log('Rendering', recentVisits.length, 'recent visits');
-    
-    recentVisits.forEach((v, i) => {
+    visits.slice(0, 20).forEach((v, i) => {
       const card = document.createElement('div');
       card.className = 'card fade-in';
       card.style.animationDelay = `${i * 50}ms`;
@@ -414,17 +377,8 @@ async function loadVisits() {
       recentList.appendChild(card);
     });
 
-    // Show everything
-    document.getElementById('visits-stats').style.display = 'block';
-    document.getElementById('recent-visits-container').style.display = 'block';
-    document.getElementById('visits-empty').style.display = 'none';
-
   } catch (err) {
     console.error('Error loading visits:', err);
-    document.getElementById('visits-loading').style.display = 'none';
-    document.getElementById('visits-stats').style.display = 'none';
-    document.getElementById('recent-visits-container').style.display = 'none';
-    document.getElementById('visits-empty').style.display = 'block';
   }
 }
 
@@ -457,39 +411,22 @@ function validatePin() {
 
 async function loadEmoSmiles() {
   try {
-    console.log('Starting loadEmoSmiles...');
     const res = await fetch('/api/emotion-smile');
-    console.log('Emotion smiles API response status:', res.status);
-    
-    if (!res.ok) {
-      throw new Error(`Failed to fetch emotion smiles: ${res.status}`);
-    }
-    
+    if (!res.ok) throw new Error('Failed to fetch emotion smiles');
     const smiles = await res.json();
-    console.log('Smiles data received:', smiles);
-    console.log('Smiles is array:', Array.isArray(smiles));
-    console.log('Smiles length:', smiles ? smiles.length : 'null');
 
     if (!smiles || smiles.length === 0) {
-      console.log('No smiles data available - showing empty state');
-      document.getElementById('emotion-smiles-empty').style.display = 'block';
       document.getElementById('emotion-smiles-stats').style.display = 'none';
-      document.getElementById('emotion-smiles-container').style.display = 'none';
       return;
     }
 
     // Update stats
     document.getElementById('total-smiles').textContent = smiles.length;
-    document.getElementById('emotion-smiles-stats').style.display = 'block';
-    document.getElementById('emotion-smiles-empty').style.display = 'none';
 
     // Recent smiles
     const smilesList = document.getElementById('emotion-smiles-list');
     smilesList.innerHTML = '';
-    const recentSmiles = smiles.slice(0, 50);
-    console.log('Rendering', recentSmiles.length, 'recent smiles');
-    
-    recentSmiles.forEach((s, i) => {
+    smiles.slice(0, 50).forEach((s, i) => {
       const card = document.createElement('div');
       card.className = 'card fade-in';
       card.style.animationDelay = `${i * 50}ms`;
@@ -508,13 +445,8 @@ async function loadEmoSmiles() {
       smilesList.appendChild(card);
     });
 
-    document.getElementById('emotion-smiles-container').style.display = 'block';
-
   } catch (err) {
     console.error('Error loading emotion smiles:', err);
-    document.getElementById('emotion-smiles-empty').style.display = 'block';
-    document.getElementById('emotion-smiles-stats').style.display = 'none';
-    document.getElementById('emotion-smiles-container').style.display = 'none';
   }
 }
 
