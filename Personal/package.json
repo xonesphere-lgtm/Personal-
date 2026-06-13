@@ -1,0 +1,18 @@
+{
+  "name": "juneletter",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "db:generate": "drizzle-kit generate"
+  },
+  "dependencies": {
+    "@netlify/database": "^1.0.0",
+    "drizzle-orm": "beta"
+  },
+  "devDependencies": {
+    "@netlify/functions": "^3.0.0",
+    "@types/node": "^22.0.0",
+    "drizzle-kit": "beta",
+    "typescript": "^5.0.0"
+  }
+}

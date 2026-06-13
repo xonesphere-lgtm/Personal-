@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JK • 1 Year Since Yes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500&family=Great+Vibes&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/framer-motion/10.16.4/framer-motion.umd.min.js"></script>
+  <style>
+    :root {
+      --blush: #F8D7DA;
+      --rose: #E8A0BF;
+      --dusty: #D9A5B3;
+      --cream: #FFF8F5;
+      --champagne: #D4AF37;
+      --dark: #3B2F2F;
+      --mid: #6B4F4F;
+      --light-mid: #9B7878;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--cream);
+      color: var(--dark);
+      overflow-x: hidden;
+    }
+
+    .font-display { font-family: 'Cormorant Garamond', serif; }
+    .font-script { font-family: 'Great Vibes', cursive; }
+
+    /* Petal particle */
+    .petal {
+      position: absolute;
+      pointer-events: none;
+      opacity: 0;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0%   { transform: translateY(-60px) rotate(0deg); opacity: 0.7; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* Gold shimmer text */
+    .gold-text {
+      background: linear-gradient(135deg, #D4AF37 0%, #F0D060 40%, #D4AF37 60%, #A8850A 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Hero overlay */
+    .hero-overlay {
+      background: linear-gradient(
+        160deg,
+        rgba(248, 215, 218, 0.82) 0%,
+        rgba(232, 160, 191, 0.60) 40%,
+        rgba(217, 165, 179, 0.72) 80%,
+        rgba(59, 47, 47, 0.30) 100%
+      );
+    }
+
+    /* Glass card */
+    .glass-card {
+      background: rgba(255, 248, 245, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      border-radius: 16px;
+      transition: all 0.4s ease;
+    }
+
+    .glass-card:hover {
+      border-color: rgba(212, 175, 55, 0.5);
+      box-shadow: 0 12px 40px rgba(232, 160, 191, 0.25);
+      transform: translateY(-4px);
+    }
+
+    /* Promise card */
+    .promise-card {
+      background: linear-gradient(145deg, #FFF8F5 0%, #FEF0F3 100%);
+      border: 1px solid rgba(217, 165, 179, 0.3);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+    }
+    .promise-card:hover {
+      border-color: var(--champagne);
+      box-shadow: 0 16px 48px rgba(232, 160, 191, 0.3);
+      transform: translateY(-6px);
+    }
+    .promise-card.open {
+      background: linear-gradient(145deg, #FEF0F3 0%, #FADADD 100%);
+      border-color: var(--champagne);
+      box-shadow: 0 20px 60px rgba(212, 175, 55, 0.2);
+    }
+
+    /* Counter digit */
+    .counter-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      line-height: 1;
+      background: linear-gradient(135deg, #D4AF37, #F0D060, #D4AF37);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Timeline connector */
+    .timeline-line {
+      width: 2px;
+      background: linear-gradient(to bottom, var(--rose), var(--champagne), var(--dusty));
+      flex-shrink: 0;
+    }
+
+    /* Section divider */
+    .divider {
+      width: 80px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--champagne), transparent);
+      margin: 0 auto;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(59, 47, 47, 0.6);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .modal-box {
+      background: linear-gradient(145deg, #FFF8F5, #FADADD);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      border-radius: 24px;
+      padding: 3rem 2.5rem;
+      max-width: 520px;
+      width: 100%;
+      transform: translateY(40px) scale(0.95);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      text-align: center;
+    }
+    .modal-backdrop.open .modal-box {
+      transform: translateY(0) scale(1);
+    }
+
+    /* Scroll reveal base */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Hero text glow */
+    .text-glow {
+      text-shadow: 0 0 60px rgba(248, 215, 218, 0.8), 0 0 120px rgba(232, 160, 191, 0.3);
+    }
+
+    /* Letter paragraph */
+    .letter-body p {
+      margin-bottom: 1.5rem;
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: var(--mid);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+    }
+
+    /* Noise texture overlay */
+    .noise-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' seed='2'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='50'/%3E%3C/filter%3E%3Crect width='512' height='512' filter='url(%23n)'/%3E%3C/svg%3E");
+      pointer-events: none;
+      opacity: 0.4;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .petal, .reveal, .modal-box, .modal-backdrop { animation: none !important; transition: none !important; }
+      .reveal { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* Emotional closing animations */
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    @media (max-width: 640px) {
+      .counter-num { font-size: 3.5rem !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- FLOATING PETALS -->
+<div id="petals-container" style="position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;"></div>
+
+<!-- ===== SECTION 1: HERO ===== -->
+<section id="hero" style="position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#2a1a1a;">
+  <!-- Gradient background (engagement-photo feel) -->
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 30% 40%,#5a2a3a 0%,#2a1015 40%,#1a0a0f 100%);"></div>
+
+  <!-- Pink overlay -->
+  <div class="hero-overlay" style="position:absolute;inset:0;"></div>
+
+  <!-- Decorative circles -->
+  <div style="position:absolute;top:10%;right:8%;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(232,160,191,0.15),transparent 70%);pointer-events:none;"></div>
+  <div style="position:absolute;bottom:15%;left:5%;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,0.1),transparent 70%);pointer-events:none;"></div>
+
+  <!-- Content -->
+  <div style="position:relative;z-index:10;text-align:center;padding:2rem 1.5rem;max-width:860px;margin:0 auto;">
+    <!-- Decorative script above -->
+    <p class="font-script reveal" style="font-size:2.2rem;color:var(--rose);margin-bottom:0.5rem;opacity:0.9;">
+      with love,
+    </p>
+
+    <!-- Main heading -->
+    <h1 class="font-display reveal text-glow" style="font-size:clamp(2.8rem,8vw,5.5rem);font-weight:300;color:var(--cream);line-height:1.1;letter-spacing:-0.01em;margin-bottom:1rem;">
+      One Year Since<br/>We Said <em style="font-style:italic;color:var(--blush);">Yes</em>
+    </h1>
+
+    <!-- Dates -->
+    <div class="reveal" style="display:flex;align-items:center;justify-content:center;gap:1rem;margin:1.5rem 0;">
+      <span style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.85rem;letter-spacing:0.18em;color:var(--rose);text-transform:uppercase;">22 June 2025</span>
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+        <div style="width:30px;height:1px;background:linear-gradient(90deg,transparent,var(--champagne));"></div>
+        <span style="color:var(--champagne);font-size:1rem;">❤</span>
+        <div style="width:30px;height:1px;background:linear-gradient(90deg,var(--champagne),transparent);"></div>
+      </div>
+      <span style="font-family:'Jost',sans-serif;font-weight:300;font-size:0.85rem;letter-spacing:0.18em;color:var(--rose);text-transform:uppercase;">22 June 2026</span>
+    </div>
+
+    <!-- Subtext -->
+    <p class="font-display reveal" style="font-size:clamp(1.1rem,2.5vw,1.45rem);font-weight:300;font-style:italic;color:rgba(255,248,245,0.88);line-height:1.7;max-width:600px;margin:0 auto 2.5rem;">
+      A year ago, our families brought us together.<br/>
+      Today, I still look forward to every part of the journey ahead.
+    </p>
+
+    <!-- Scroll hint -->
+    <div class="reveal" style="display:flex;flex-direction:column;align-items:center;gap:0.5rem;opacity:0.6;">
+      <span style="font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--blush);">Scroll</span>
+      <div style="width:1px;height:40px;background:linear-gradient(to bottom,var(--rose),transparent);animation:pulse 2s ease infinite;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 2: THE WAITING YEAR ===== -->
+<section id="waiting" style="padding:7rem 1.5rem;background:linear-gradient(180deg,#FFF8F5 0%,#FEF0F3 100%);position:relative;overflow:hidden;">
+  <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:300px;background:radial-gradient(ellipse,rgba(232,160,191,0.12),transparent 70%);pointer-events:none;"></div>
+
+  <div style="max-width:720px;margin:0 auto;text-align:center;">
+    <!-- Eyebrow -->
+    <p class="reveal" style="font-size:0.75rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--dusty);margin-bottom:1rem;">The Year Between</p>
+
+    <h2 class="font-display reveal" style="font-size:clamp(2.2rem,5vw,3.5rem);font-weight:300;color:var(--dark);margin-bottom:1rem;">
+      A Year of <em style="font-style:italic;color:var(--rose);">Waiting</em>
+    </h2>
+
+    <div class="divider reveal" style="margin-bottom:2rem;"></div>
+
+    <p class="font-display reveal" style="font-size:1.2rem;line-height:1.8;color:var(--mid);font-weight:300;margin-bottom:3.5rem;font-style:italic;">
+      One year has passed since our engagement.<br/>
+      We may not have shared countless conversations yet.<br/>
+      But every day has brought us one step closer<br/>to the life we will build together.
+    </p>
+
+    <!-- Timeline visual -->
+    <div class="reveal" style="display:flex;flex-direction:column;align-items:center;gap:0;">
+      <!-- Node 1 -->
+      <div class="glass-card" style="padding:1.5rem 2.5rem;min-width:260px;text-align:center;">
+        <div style="font-size:1.5rem;margin-bottom:0.5rem;">💍</div>
+        <p class="font-display" style="font-size:1.3rem;font-weight:500;color:var(--dark);">Engagement</p>
+        <p style="font-size:0.75rem;letter-spacing:0.15em;color:var(--dusty);margin-top:0.25rem;">22 June 2025</p>
+      </div>
+
+      <!-- Line + days -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:0;padding:0.25rem 0;">
+        <div class="timeline-line" style="height:30px;"></div>
+        <div style="border:1px solid rgba(212,175,55,0.35);border-radius:50px;padding:0.6rem 1.5rem;background:linear-gradient(135deg,rgba(248,215,218,0.6),rgba(232,160,191,0.4));">
+          <p class="font-display" style="font-size:1.1rem;color:var(--dark);font-weight:500;">365 Days</p>
+          <p style="font-size:0.7rem;letter-spacing:0.1em;color:var(--dusty);text-align:center;">of quiet anticipation</p>
+        </div>
+        <div class="timeline-line" style="height:30px;"></div>
+      </div>
+
+      <!-- Node 2 -->
+      <div class="glass-card" style="padding:1.5rem 2.5rem;min-width:260px;text-align:center;border-color:rgba(212,175,55,0.4);">
+        <div style="font-size:1.5rem;margin-bottom:0.5rem;">✨</div>
+        <p class="font-display gold-text" style="font-size:1.3rem;font-weight:500;">Closer to Nikah</p>
+        <p style="font-size:0.75rem;letter-spacing:0.15em;color:var(--dusty);margin-top:0.25rem;">Every day, a step nearer</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 3: ONE YEAR LATER — COUNTERS ===== -->
+<section id="counters" style="padding:7rem 1.5rem;background:linear-gradient(160deg,#2a1015 0%,#3d1a25 50%,#2a1015 100%);position:relative;overflow:hidden;">
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(232,160,191,0.08) 0%,transparent 70%);"></div>
+
+  <div style="max-width:900px;margin:0 auto;text-align:center;position:relative;z-index:1;">
+    <p class="reveal" style="font-size:0.75rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--dusty);margin-bottom:1rem;">One Year Later</p>
+
+    <h2 class="font-display reveal" style="font-size:clamp(2rem,5vw,3.2rem);font-weight:300;color:var(--cream);margin-bottom:0.75rem;">
+      Every Moment, <em style="font-style:italic;color:var(--rose);">Counted</em>
+    </h2>
+
+    <div class="divider reveal" style="margin-bottom:3rem;"></div>
+
+    <div class="reveal" style="display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;max-width:700px;margin:0 auto 3rem;">
+      <div style="text-align:center;padding:2rem 1rem;">
+        <div class="counter-num" id="c1" style="font-size:clamp(3.5rem,8vw,5rem);">365</div>
+        <p style="font-family:'Jost',sans-serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--dusty);margin-top:0.5rem;">Days</p>
+      </div>
+      <div style="text-align:center;padding:2rem 1rem;">
+        <div class="counter-num" id="c2" style="font-size:clamp(3.5rem,8vw,5rem);">8,760</div>
+        <p style="font-family:'Jost',sans-serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--dusty);margin-top:0.5rem;">Hours</p>
+      </div>
+      <div style="text-align:center;padding:2rem 1rem;">
+        <div class="counter-num" id="c3" style="font-size:clamp(3.5rem,8vw,5rem);">525,600</div>
+        <p style="font-family:'Jost',sans-serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--dusty);margin-top:0.5rem;">Minutes</p>
+      </div>
+      <div style="text-align:center;padding:2rem 1rem;">
+        <div class="counter-num" id="c4" style="font-size:clamp(2.5rem,6vw,3.8rem);">31,536,000</div>
+        <p style="font-family:'Jost',sans-serif;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--dusty);margin-top:0.5rem;">Seconds</p>
+      </div>
+    </div>
+
+    <p class="font-display reveal" style="font-size:1.2rem;font-style:italic;color:rgba(255,248,245,0.75);font-weight:300;">
+      Every second has quietly brought us closer to our future.
+    </p>
+  </div>
+</section>
+
+<!-- ===== SECTION 4: LETTER TO FUTURE WIFE ===== -->
+<section id="letter" style="padding:7rem 1.5rem;background:linear-gradient(180deg,#FEF0F3 0%,#FFF8F5 100%);position:relative;overflow:hidden;">
+  <div style="position:absolute;top:-100px;right:-100px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,0.06),transparent 70%);pointer-events:none;"></div>
+  <div style="position:absolute;bottom:-80px;left:-80px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(232,160,191,0.1),transparent 70%);pointer-events:none;"></div>
+
+  <div style="max-width:720px;margin:0 auto;">
+    <!-- Letter header -->
+    <div style="text-align:center;margin-bottom:3.5rem;">
+      <p class="reveal" style="font-size:0.75rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--dusty);margin-bottom:1rem;">Written with care</p>
+      <h2 class="font-display reveal" style="font-size:clamp(2.2rem,5vw,3.5rem);font-weight:300;color:var(--dark);margin-bottom:0.5rem;">
+        A Letter To My<br/><em style="font-style:italic;color:var(--rose);">Future Wife</em>
+      </h2>
+      <div class="divider reveal" style="margin-top:1.5rem;"></div>
+    </div>
+
+    <!-- Letter card -->
+    <div class="reveal glass-card" style="padding:3rem 2.5rem;position:relative;">
+      <!-- Wax seal decoration -->
+      <div style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--champagne),#A8850A);display:flex;align-items:center;justify-content:center;font-size:1.2rem;">
+        <span style="font-size:1rem;">❤</span>
+      </div>
+
+      <p class="font-script" style="font-size:1.8rem;color:var(--rose);margin-bottom:1.5rem;">My dearest,</p>
+
+      <div class="letter-body">
+  <p>
+    A year ago, I said yes to a future I could not yet see. I trusted Allah's plan, even without knowing what the path ahead would look like.
+  </p>
+
+  <p>
+    Today, I am grateful for this journey of patience and waiting. Not for what has already happened, but for everything that is still to come, InshaAllah.
+  </p>
+
+  <p>
+    I look forward to the simple moments — sharing life after long days, standing beside each other in ease and difficulty, and building a home filled with sakoon, mercy, and barakah.
+  </p>
+
+  <p>
+    I do not know everything about you yet, but I look forward to learning you — your laughter, your silence, your dreams.
+  </p>
+
+  <p>
+    This year of waiting has been sabr, and I pray what comes next is filled with khair, ease, and Allah's blessings. Ameen.
+  </p>
+
+  <p>
+    Until then — I remain here. With patience. With hope. And with sincerity.
+  </p>
+</div>
+
+      <div style="margin-top:2rem;text-align:right;">
+        <p class="font-script" style="font-size:1.6rem;color:var(--dusty);">With all my heart</p>
+        <p class="font-script" style="font-size:1.5rem;color:var(--dusty);margin:0.5rem 0 0 0;">— Jazil</p>
+        <div style="width:80px;height:1px;background:linear-gradient(90deg,transparent,var(--champagne));margin-left:auto;margin-top:0.5rem;"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 5: PROMISES ===== -->
+<section id="promises" style="padding:7rem 1.5rem;background:linear-gradient(180deg,#FFF8F5 0%,#FEF0F3 100%);">
+  <div style="max-width:960px;margin:0 auto;text-align:center;">
+    <p class="reveal" style="font-size:0.75rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--dusty);margin-bottom:1rem;">From my heart to yours</p>
+    <h2 class="font-display reveal" style="font-size:clamp(2.2rem,5vw,3.5rem);font-weight:300;color:var(--dark);margin-bottom:0.75rem;">
+      Promises I Want <em style="font-style:italic;color:var(--rose);">to Keep</em>
+    </h2>
+    <div class="divider reveal" style="margin-bottom:1rem;"></div>
+    <p class="reveal" style="font-size:0.85rem;color:var(--light-mid);margin-bottom:3rem;letter-spacing:0.05em;">Tap each card to read more</p>
+
+    <div id="promises-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem;text-align:left;">
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 6: FINAL MESSAGE ===== -->
+<section id="final" style="padding:8rem 1.5rem;background:linear-gradient(160deg,#1a0a0f 0%,#2d1018 50%,#1a0a0f 100%);position:relative;overflow:hidden;text-align:center;">
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(232,160,191,0.1) 0%,transparent 65%);"></div>
+
+  <!-- Decorative petals static -->
+  <div style="position:absolute;top:20%;left:5%;font-size:2rem;opacity:0.08;transform:rotate(-20deg);">🌸</div>
+  <div style="position:absolute;top:60%;right:6%;font-size:2.5rem;opacity:0.06;transform:rotate(15deg);">🌸</div>
+  <div style="position:absolute;bottom:20%;left:12%;font-size:1.5rem;opacity:0.07;transform:rotate(5deg);">🌸</div>
+
+  <div style="max-width:700px;margin:0 auto;position:relative;z-index:1;">
+    <p class="font-script reveal" style="font-size:2.5rem;color:var(--rose);margin-bottom:2rem;">One year ago...</p>
+
+    <p class="font-display reveal" style="font-size:clamp(1.3rem,3vw,1.8rem);font-weight:300;color:var(--cream);line-height:1.75;margin-bottom:1.5rem;">
+      One year ago, we got engaged.
+    </p>
+
+    <p class="font-display reveal" style="font-size:clamp(1.1rem,2.5vw,1.5rem);font-weight:300;font-style:italic;color:rgba(255,248,245,0.75);line-height:1.8;margin-bottom:1.5rem;">
+      The best part isn't that a year has passed.
+    </p>
+
+    <p class="font-display reveal" style="font-size:clamp(1.2rem,2.8vw,1.7rem);font-weight:300;color:var(--blush);line-height:1.75;margin-bottom:3rem;">
+      The best part is knowing that every day<br/>brings us closer to the life we will share.
+    </p>
+
+    <div class="divider reveal" style="margin-bottom:3rem;"></div>
+
+    <h2 class="font-script reveal" style="font-size:clamp(2rem,6vw,3.5rem);color:var(--rose);margin-bottom:0.5rem;">
+      Happy One-Year Engagement Anniversary
+    </h2>
+    <p class="reveal" style="font-size:2rem;">❤️</p>
+
+    <!-- Hidden surprise button -->
+    <div class="reveal" style="margin-top:3.5rem;">
+      <button onclick="openModal()" style="background:transparent;border:1px solid rgba(212,175,55,0.5);color:var(--champagne);font-family:'Jost',sans-serif;font-size:0.8rem;letter-spacing:0.2em;text-transform:uppercase;padding:0.75rem 2rem;border-radius:50px;cursor:pointer;transition:all 0.3s;"
+        onmouseover="this.style.background='rgba(212,175,55,0.1)';this.style.borderColor='var(--champagne)';"
+        onmouseout="this.style.background='transparent';this.style.borderColor='rgba(212,175,55,0.5)';">
+        One More Thing...
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 7: EMOTIONAL CLOSING ===== -->
+<section id="emotional-closing" style="padding:8rem 1.5rem;background:linear-gradient(180deg,#FEF0F3 0%,#FFF8F5 100%);position:relative;overflow:hidden;min-height:100vh;display:flex;align-items:center;justify-content:center;">
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(232,160,191,0.08) 0%,transparent 70%);"></div>
+
+  <!-- Initial Emotional Question -->
+  <div id="emotion-question" style="max-width:520px;width:100%;text-align:center;position:relative;z-index:1;display:block;">
+    <!-- Decorative element -->
+    <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--dusty));margin:0 auto 2rem;display:flex;align-items:center;justify-content:center;font-size:1.5rem;">
+      💝
+    </div>
+
+    <p class="font-script" style="font-size:2rem;color:var(--rose);margin-bottom:1rem;">Before you leave…</p>
+    <h2 class="font-display" style="font-size:clamp(1.6rem,4vw,2.4rem);font-weight:300;color:var(--dark);line-height:1.4;margin-bottom:2rem;">
+      How did this<br/><em style="font-style:italic;color:var(--dusty);">moment</em> make you feel?
+    </h2>
+
+    <!-- Two soft buttons -->
+    <div style="display:flex;flex-direction:column;gap:1rem;max-width:400px;margin:0 auto;">
+      <button
+        onclick="showTellForm()"
+        style="background:linear-gradient(135deg,var(--rose),var(--dusty));border:none;color:white;font-family:'Jost',sans-serif;font-size:0.95rem;letter-spacing:0.1em;text-transform:capitalize;padding:1rem 2rem;border-radius:50px;cursor:pointer;transition:all 0.3s;box-shadow:0 8px 32px rgba(232,160,191,0.2);"
+        onmouseover="this.style.transform='scale(1.05)';this.style.boxShadow='0 12px 40px rgba(232,160,191,0.35)'"
+        onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 8px 32px rgba(232,160,191,0.2)'"
+      >
+        💗 I want to tell you
+      </button>
+
+      <button
+        onclick="showJustSmile()"
+        style="background:rgba(255,248,245,0.8);border:2px solid var(--rose);color:var(--rose);font-family:'Jost',sans-serif;font-size:0.95rem;letter-spacing:0.1em;text-transform:capitalize;padding:1rem 2rem;border-radius:50px;cursor:pointer;transition:all 0.3s;"
+        onmouseover="this.style.background='rgba(255,248,245,0.95)';this.style.borderColor='var(--dusty)'"
+        onmouseout="this.style.background='rgba(255,248,245,0.8)';this.style.borderColor='var(--rose)'"
+      >
+        🌸 I'll just smile
+      </button>
+    </div>
+  </div>
+
+  <!-- Tell Your Thoughts Form -->
+  <div id="emotion-tell-form" style="display:none;max-width:520px;width:100%;position:relative;z-index:1;">
+    <div style="text-align:center;margin-bottom:2.5rem;">
+      <button onclick="backToQuestion()" style="background:none;border:none;color:var(--rose);font-size:1.2rem;cursor:pointer;transition:all 0.2s;margin-bottom:1rem;"
+        onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">←</button>
+      
+      <p class="font-script" style="font-size:1.8rem;color:var(--rose);margin-bottom:0.75rem;">Write your thoughts…</p>
+      <div class="divider" style="margin:1rem auto;"></div>
+    </div>
+
+    <div style="background:rgba(255,248,245,0.95);backdrop-filter:blur(12px);border:1px solid rgba(212,175,55,0.2);border-radius:20px;padding:2.5rem 2rem;">
+      <!-- Stars -->
+      <div id="emotion-stars-container" style="display:flex;justify-content:center;gap:0.75rem;margin-bottom:2rem;" role="group" aria-label="Star rating">
+        <span class="emotion-star" data-value="1" style="font-size:2.2rem;cursor:pointer;transition:transform 0.2s ease,filter 0.2s ease;filter:grayscale(1);opacity:0.45;" title="1 star">★</span>
+        <span class="emotion-star" data-value="2" style="font-size:2.2rem;cursor:pointer;transition:transform 0.2s ease,filter 0.2s ease;filter:grayscale(1);opacity:0.45;" title="2 stars">★</span>
+        <span class="emotion-star" data-value="3" style="font-size:2.2rem;cursor:pointer;transition:transform 0.2s ease,filter 0.2s ease;filter:grayscale(1);opacity:0.45;" title="3 stars">★</span>
+        <span class="emotion-star" data-value="4" style="font-size:2.2rem;cursor:pointer;transition:transform 0.2s ease,filter 0.2s ease;filter:grayscale(1);opacity:0.45;" title="4 stars">★</span>
+        <span class="emotion-star" data-value="5" style="font-size:2.2rem;cursor:pointer;transition:transform 0.2s ease,filter 0.2s ease;filter:grayscale(1);opacity:0.45;" title="5 stars">★</span>
+      </div>
+
+      <!-- Star Message Display -->
+      <div id="emotion-star-message" style="text-align:center;margin-bottom:1.5rem;min-height:3rem;display:flex;align-items:center;justify-content:center;">
+        <div id="emotion-message-content" style="display:none;">
+          <div style="font-size:2rem;margin-bottom:0.5rem;" id="emotion-message-emoji"></div>
+          <p style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-style:italic;color:var(--rose);line-height:1.6;" id="emotion-message-text"></p>
+        </div>
+      </div>
+
+      <!-- Textarea -->
+      <textarea
+        id="emotion-message"
+        placeholder="Tell me anything… your feelings, your thoughts, what your heart felt…"
+        rows="5"
+        maxlength="1000"
+        style="width:100%;resize:vertical;border:1px solid rgba(217,165,179,0.4);border-radius:12px;padding:1rem 1.25rem;font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--dark);background:rgba(248,215,218,0.1);transition:border 0.3s;"
+        onfocus="this.style.borderColor='var(--champagne)'"
+        onblur="this.style.borderColor='rgba(217,165,179,0.4)'"
+      ></textarea>
+      <p style="font-size:0.7rem;color:var(--light-mid);text-align:right;margin-bottom:1.5rem;" id="emotion-char-count">0 / 1000</p>
+
+      <!-- Submit button -->
+      <button
+        id="emotion-submit"
+        onclick="submitEmotion()"
+        style="background:linear-gradient(135deg,var(--rose),var(--dusty));border:none;color:white;font-family:'Jost',sans-serif;font-size:0.8rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.8rem 1.5rem;border-radius:50px;width:100%;cursor:pointer;transition:opacity 0.3s;"
+        onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'"
+      >
+        Send it to my heart ❤️
+      </button>
+
+      <div id="emotion-status" style="margin-top:1.25rem;font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-style:italic;text-align:center;color:var(--rose);min-height:1.5em;"></div>
+    </div>
+  </div>
+
+  <!-- Success Message -->
+  <div id="emotion-success" style="display:none;max-width:520px;width:100%;text-align:center;position:relative;z-index:1;">
+    <div style="font-size:3rem;margin-bottom:1.5rem;animation:fadeInScale 0.8s ease;">💌</div>
+    <p class="font-script" style="font-size:2rem;color:var(--rose);margin-bottom:1rem;">I'll keep this forever.</p>
+    <div class="divider" style="margin:1.5rem auto;"></div>
+    <p class="font-display" style="font-size:1.15rem;font-style:italic;color:var(--mid);line-height:1.8;margin-bottom:2rem;">
+      Your words are now part of my heart.<br/>Thank you for trusting me with your feelings.
+    </p>
+    <p style="font-size:2rem;">🌸❤️🌸</p>
+  </div>
+
+  <!-- Just Smile Message -->
+  <div id="emotion-smile" style="display:none;max-width:520px;width:100%;text-align:center;position:relative;z-index:1;opacity:0;transition:opacity 0.6s ease;">
+    <div style="font-size:3rem;margin-bottom:1.5rem;animation:fadeInScale 0.8s ease;">🌸</div>
+    <p class="font-script" style="font-size:2rem;color:var(--rose);margin-bottom:1rem;animation:fadeIn 0.8s ease 0.2s both;">That's okay…</p>
+    <p class="font-display" style="font-size:1.15rem;font-style:italic;color:var(--mid);line-height:1.8;margin-bottom:1.5rem;animation:fadeIn 0.8s ease 0.4s both;">
+      Your smile is enough for me.
+    </p>
+    
+    <div style="animation:fadeIn 0.8s ease 0.6s both;">
+      <div class="divider" style="margin:1.5rem auto;"></div>
+      <p class="font-display" style="font-size:1.05rem;font-style:italic;color:var(--light-mid);line-height:1.7;">
+        But if you ever want to tell me,<br/>I'll always be here.
+      </p>
+      <p style="font-size:1.5rem;margin-top:1rem;margin-bottom:1.5rem;">❤️</p>
+      
+      <!-- Return to Review Button -->
+      <button
+        onclick="backFromSmile()"
+        style="background:linear-gradient(135deg,rgba(232,160,191,0.3),rgba(217,165,179,0.2));border:1px solid rgba(232,160,191,0.5);color:var(--rose);font-family:'Jost',sans-serif;font-size:0.8rem;letter-spacing:0.1em;text-transform:capitalize;padding:0.7rem 1.5rem;border-radius:50px;cursor:pointer;transition:all 0.3s;animation:fadeIn 0.8s ease 1s both;"
+        onmouseover="this.style.background='linear-gradient(135deg,rgba(232,160,191,0.4),rgba(217,165,179,0.3))';this.style.borderColor='var(--rose)'"
+        onmouseout="this.style.background='linear-gradient(135deg,rgba(232,160,191,0.3),rgba(217,165,179,0.2))';this.style.borderColor='rgba(232,160,191,0.5)'"
+      >
+        💗 Actually, I'd like to tell you
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-backdrop" id="modal" onclick="closeModalOnBackdrop(event)">
+  <div class="modal-box" id="modal-box">
+    <!-- Wax seal -->
+    <div style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--dusty));margin:0 auto 1.5rem;display:flex;align-items:center;justify-content:center;font-size:1.3rem;">
+      💍
+    </div>
+
+    <p class="font-script" style="font-size:2.2rem;color:var(--rose);margin-bottom:1rem;">One more thing...</p>
+
+    <div style="width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--champagne),transparent);margin:0 auto 1.5rem;"></div>
+
+    <p class="font-display" style="font-size:1.2rem;line-height:1.8;color:var(--mid);font-weight:300;font-style:italic;margin-bottom:1rem;">
+      Thank you for saying yes one year ago.
+    </p>
+
+    <p class="font-display" style="font-size:1.15rem;line-height:1.8;color:var(--mid);font-weight:300;margin-bottom:2rem;">
+      I still look forward to the day I can finally call you my wife.
+    </p>
+
+    <p style="font-size:1.8rem;">🌸❤️🌸</p>
+
+    <button onclick="closeModal()" style="margin-top:2rem;background:linear-gradient(135deg,var(--rose),var(--dusty));border:none;color:white;font-family:'Jost',sans-serif;font-size:0.8rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.8rem 1.5rem;border-radius:50px;cursor:pointer;transition:opacity 0.3s;"
+      onmouseover="this.style.opacity='0.85';" onmouseout="this.style.opacity='1';">
+      Close
+    </button>
+  </div>
+</div>
+
+<script>
+// ---- PROMISES DATA ----
+const promises = [
+  {
+    icon: '🤝',
+    title: 'Respect',
+    short: 'I will always honor who you are.',
+    long: 'I will listen to your thoughts, value your opinions, and never make you feel small. Your feelings matter, and I will treat them with the care they deserve — always.'
+  },
+  {
+    icon: '🌿',
+    title: 'Patience',
+    short: 'I will give you space to be yourself.',
+    long: 'I will not rush you, pressure you, or expect perfection. Growth takes time, and I will be beside you through every chapter — unhurried and steady.'
+  },
+  {
+    icon: '🌟',
+    title: 'Support',
+    short: 'I will be your loudest cheerleader.',
+    long: 'In your dreams, your hard days, and your quiet struggles — I will be there. When the world feels heavy, I want to be the person who makes it lighter.'
+  },
+  {
+    icon: '🔐',
+    title: 'Loyalty',
+    short: 'I will choose you, every single day.',
+    long: 'Not just once, but in every small decision. You will never have to wonder where my heart is — it will always come back to you.'
+  },
+  {
+    icon: '🌸',
+    title: 'Kindness',
+    short: 'I will meet you with gentleness.',
+    long: 'Even in disagreement, even in exhaustion — I choose kindness. The words I say to you should build you up, not tear you down. Always.'
+  },
+  {
+    icon: '🏡',
+    title: 'Partnership',
+    short: 'We will face everything together.',
+    long: 'Life is not something one person carries alone. Every decision, every joy, every difficulty — we will face as a team. Our home will be built by both of us, equally.'
+  }
+];
+
+// Render promise cards
+const grid = document.getElementById('promises-grid');
+promises.forEach((p, i) => {
+  const card = document.createElement('div');
+  card.className = 'promise-card reveal';
+  card.style.cssText = 'padding:1.75rem 1.5rem;';
+  card.innerHTML = `
+    <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+      <span style="font-size:1.5rem;">${p.icon}</span>
+      <h3 class="font-display" style="font-size:1.3rem;font-weight:500;color:var(--dark);">${p.title}</h3>
+      <span class="arrow" style="margin-left:auto;color:var(--champagne);font-size:0.9rem;transition:transform 0.3s;">▾</span>
+    </div>
+    <p style="font-size:0.9rem;color:var(--light-mid);line-height:1.6;">${p.short}</p>
+    <div class="expand-body" style="max-height:0;overflow:hidden;transition:max-height 0.5s cubic-bezier(0.4,0,0.2,1);">
+      <p style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-style:italic;color:var(--mid);line-height:1.75;padding-top:0.75rem;border-top:1px solid rgba(217,165,179,0.3);margin-top:0.75rem;">${p.long}</p>
+    </div>
+  `;
+  card.addEventListener('click', () => {
+    const body = card.querySelector('.expand-body');
+    const arrow = card.querySelector('.arrow');
+    const isOpen = card.classList.contains('open');
+    card.classList.toggle('open', !isOpen);
+    body.style.maxHeight = isOpen ? '0' : '200px';
+    arrow.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+  });
+  grid.appendChild(card);
+});
+
+// ---- PETALS ----
+const container = document.getElementById('petals-container');
+const shapes = ['🌸','🌷','✿','❀'];
+
+function spawnPetal() {
+  const el = document.createElement('div');
+  el.className = 'petal';
+  el.textContent = shapes[Math.floor(Math.random()*shapes.length)];
+  const size = 10 + Math.random()*16;
+  el.style.cssText = `
+    left:${Math.random()*100}%;
+    font-size:${size}px;
+    animation-duration:${8+Math.random()*10}s;
+    animation-delay:${Math.random()*5}s;
+    opacity:0.5;
+  `;
+  container.appendChild(el);
+  setTimeout(() => el.remove(), 20000);
+}
+setInterval(spawnPetal, 800);
+for(let i=0;i<8;i++) spawnPetal();
+
+// ---- SCROLL REVEAL ----
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      const delay = e.target.dataset.delay || 0;
+      setTimeout(() => e.target.classList.add('visible'), delay);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+// Stagger reveals within each section
+document.querySelectorAll('.reveal').forEach((el, i) => {
+  // Group stagger within same parent
+  const siblings = Array.from(el.parentElement.querySelectorAll('.reveal'));
+  const idx = siblings.indexOf(el);
+  el.dataset.delay = idx * 120;
+  observer.observe(el);
+});
+
+// ---- MODAL ----
+function openModal() {
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeModalOnBackdrop(e) {
+  if(e.target.id === 'modal') closeModal();
+}
+
+// ---- COUNTER ANIMATION ----
+function animateCounter(el, target, duration) {
+  const start = performance.now();
+  const formatted = (n) => n.toLocaleString();
+  function update(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = 1 - Math.pow(1-progress, 3);
+    el.textContent = formatted(Math.round(ease * target));
+    if(progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+const counterSection = document.getElementById('counters');
+let countersAnimated = false;
+const counterObserver = new IntersectionObserver((entries) => {
+  if(entries[0].isIntersecting && !countersAnimated) {
+    countersAnimated = true;
+    setTimeout(() => animateCounter(document.getElementById('c1'), 365, 1400), 200);
+    setTimeout(() => animateCounter(document.getElementById('c2'), 8760, 1600), 400);
+    setTimeout(() => animateCounter(document.getElementById('c3'), 525600, 1800), 600);
+    setTimeout(() => animateCounter(document.getElementById('c4'), 31536000, 2000), 800);
+  }
+}, { threshold: 0.3 });
+counterObserver.observe(counterSection);
+
+// Hero text stagger
+document.querySelectorAll('#hero .reveal').forEach((el, i) => {
+  el.dataset.delay = i * 180 + 300;
+});
+
+// ---- EMOTIONAL CLOSING - STAR MESSAGES ----
+const emotionStarMessages = {
+  1: {
+    emoji: '🥺',
+    message: 'Ouch... 🥺'
+  },
+  2: {
+    emoji: '🌸',
+    message: 'Fair enough 🌸'
+  },
+  3: {
+    emoji: '😊',
+    message: 'I\'ll take it 😊'
+  },
+  4: {
+    emoji: '💗',
+    message: 'You made me smile 💗'
+  },
+  5: {
+    emoji: '❤️',
+    message: 'Straight to my heart ❤️'
+  }
+};
+
+let emotionSelectedStars = 0;
+
+const emotionStars = document.querySelectorAll('.emotion-star');
+const emotionMessageBox = document.getElementById('emotion-message');
+const emotionCharCount = document.getElementById('emotion-char-count');
+
+function paintEmoStars(upTo) {
+  emotionStars.forEach(s => {
+    const v = parseInt(s.dataset.value);
+    if (v <= upTo) {
+      s.style.color = '#D4AF37';
+      s.style.filter = 'none';
+      s.style.opacity = '1';
+      s.style.transform = 'scale(1.2)';
+    } else {
+      s.style.color = '';
+      s.style.filter = 'grayscale(1)';
+      s.style.opacity = '0.4';
+      s.style.transform = 'scale(1)';
+    }
+  });
+  
+  // Display or hide the message
+  const messageContent = document.getElementById('emotion-message-content');
+  if (upTo > 0) {
+    const msg = emotionStarMessages[upTo];
+    document.getElementById('emotion-message-emoji').textContent = msg.emoji;
+    document.getElementById('emotion-message-text').textContent = msg.message;
+    messageContent.style.display = 'block';
+  } else {
+    messageContent.style.display = 'none';
+  }
+}
+
+emotionStars.forEach(s => {
+  s.addEventListener('mouseenter', () => paintEmoStars(parseInt(s.dataset.value)));
+  s.addEventListener('mouseleave', () => paintEmoStars(emotionSelectedStars));
+  s.addEventListener('click', () => {
+    emotionSelectedStars = parseInt(s.dataset.value);
+    paintEmoStars(emotionSelectedStars);
+  });
+});
+
+if (emotionMessageBox) {
+  emotionMessageBox.addEventListener('input', () => {
+    emotionCharCount.textContent = `${emotionMessageBox.value.length} / 1000`;
+  });
+}
+
+function showTellForm() {
+  document.getElementById('emotion-question').style.display = 'none';
+  document.getElementById('emotion-tell-form').style.display = 'block';
+  emotionMessageBox.focus();
+}
+
+function backToQuestion() {
+  document.getElementById('emotion-tell-form').style.display = 'none';
+  document.getElementById('emotion-smile').style.display = 'none';
+  document.getElementById('emotion-success').style.display = 'none';
+  document.getElementById('emotion-question').style.display = 'block';
+  emotionSelectedStars = 0;
+  paintEmoStars(0);
+  emotionMessageBox.value = '';
+  emotionCharCount.textContent = '0 / 1000';
+}
+
+async function submitEmotion() {
+  const message = emotionMessageBox.value.trim();
+  const statusEl = document.getElementById('emotion-status');
+  const submitBtn = document.getElementById('emotion-submit');
+
+  if (!emotionSelectedStars) {
+    statusEl.textContent = '✦ Please share how you felt';
+    statusEl.style.color = 'var(--dusty)';
+    return;
+  }
+  if (!message) {
+    statusEl.textContent = '✦ A few words would mean so much…';
+    statusEl.style.color = 'var(--dusty)';
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Sending…';
+  statusEl.textContent = '';
+
+  try {
+    const res = await fetch('/api/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ stars: emotionSelectedStars, message }),
+    });
+
+    if (res.ok) {
+      // Hide form and show success
+      document.getElementById('emotion-tell-form').style.display = 'none';
+      document.getElementById('emotion-success').style.display = 'block';
+    } else {
+      statusEl.textContent = '✦ Something went wrong. Please try again.';
+      statusEl.style.color = 'var(--dusty)';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send it to my heart ❤️';
+    }
+  } catch (err) {
+    statusEl.textContent = '✦ Connection issue. Please check and try again.';
+    statusEl.style.color = 'var(--dusty)';
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Send it to my heart ❤️';
+  }
+}
+
+function showJustSmile() {
+  document.getElementById('emotion-question').style.display = 'none';
+  document.getElementById('emotion-smile').style.display = 'block';
+  setTimeout(() => {
+    document.getElementById('emotion-smile').style.opacity = '1';
+  }, 10);
+}
+
+function backFromSmile() {
+  document.getElementById('emotion-smile').style.opacity = '0';
+  setTimeout(() => {
+    document.getElementById('emotion-smile').style.display = 'none';
+    document.getElementById('emotion-tell-form').style.display = 'block';
+    emotionMessageBox.focus();
+  }, 600);
+}
+</script>
+</body>
+</html>
